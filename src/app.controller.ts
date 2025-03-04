@@ -1,5 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { AppService } from './app.service';
+
+type TestRequest = {
+  id: string
+}
+
+type TestResponse = {
+  id: number
+  name: string
+  job: string
+}
 
 @Controller()
 export class AppController {
@@ -8,5 +18,14 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @Get('/test')
+  getTest(@Query() request: TestRequest): TestResponse {
+    return {
+      id: parseInt(request.id),
+      name: 'kim-elijah-sol',
+      job: 'FrontEnd Engineer'
+    }
   }
 }
