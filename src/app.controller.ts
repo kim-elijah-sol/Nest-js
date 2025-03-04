@@ -1,10 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 
-type TestRequest = {
-  id: string
-}
-
 type TestResponse = {
   id: number
   name: string
@@ -21,9 +17,9 @@ export class AppController {
   }
 
   @Get('/test')
-  getTest(@Query() request: TestRequest): TestResponse {
+  getTest(@Query('id') id: string): TestResponse {
     return {
-      id: parseInt(request.id),
+      id: parseInt(id),
       name: 'kim-elijah-sol',
       job: 'FrontEnd Engineer'
     }
