@@ -16,6 +16,6 @@
     "noFallthroughCasesInSwitch": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "ES5"
+    "target": "es6"
   }
 }
