@@ -16,6 +16,7 @@
     "noFallthroughCasesInSwitch": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6"
+    "target": "es6",
+    "strictPropertyInitialization": false
   }
 }
