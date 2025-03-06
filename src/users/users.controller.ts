@@ -2,11 +2,15 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
   HttpCode,
   InternalServerErrorException,
   Post,
+  Query,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JoinRequestDTO } from './dtos/JoinRequestDTO';
+import { LoginRequestDTO } from './dtos/LoginRequestDTO';
 import { UsersService } from './users.service';
 
 @Controller('/users')
@@ -31,6 +35,29 @@ export class UsersController {
       } else {
         throw new InternalServerErrorException();
       }
+    }
+  }
+
+  @Get('login')
+  @HttpCode(200)
+  async login(@Query() loginRequestDTO: LoginRequestDTO) {
+    try {
+      const result = await this.usersService.login(loginRequestDTO);
+
+      if (!result)
+        throw new UnauthorizedException('Can not find matching account');
+
+      return {
+        statusCode: 200,
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
     }
   }
 }
