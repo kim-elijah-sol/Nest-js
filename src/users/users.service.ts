@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SHA256 } from 'crypto-js';
+import { AccessTokenPayload } from 'src/auth/types/AccessTokenPayload';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginRequestDTO } from '../auth/dtos/LoginRequestDTO';
 import { JoinRequestDTO } from './dtos/JoinRequestDTO';
@@ -18,14 +19,31 @@ export class UsersService {
     });
   }
 
-  async login(loginRequestDTO: LoginRequestDTO) {
+  async login(
+    loginRequestDTO: LoginRequestDTO,
+  ): Promise<AccessTokenPayload | null> {
     return await this.prismaClient.user.findUnique({
       select: {
         idx: true,
+        id: true,
+        name: true,
       },
       where: {
         id: loginRequestDTO.id,
         password: SHA256(loginRequestDTO.password).toString(),
+      },
+    });
+  }
+
+  async getUser(userIdx: number): Promise<AccessTokenPayload | null> {
+    return await this.prismaClient.user.findUnique({
+      select: {
+        idx: true,
+        id: true,
+        name: true,
+      },
+      where: {
+        idx: userIdx,
       },
     });
   }

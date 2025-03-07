@@ -9,8 +9,8 @@ import {
   Query,
   UnauthorizedException,
 } from '@nestjs/common';
+import { LoginRequestDTO } from '../auth/dtos/LoginRequestDTO';
 import { JoinRequestDTO } from './dtos/JoinRequestDTO';
-import { LoginRequestDTO } from './dtos/LoginRequestDTO';
 import { UsersService } from './users.service';
 
 @Controller('/users')
