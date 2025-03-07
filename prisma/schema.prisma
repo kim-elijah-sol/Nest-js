@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users{
+model User {
   idx       Int       @id @default(autoincrement())
   id        String    @unique @db.VarChar(20) 
   password  String    @db.VarChar(256)
@@ -21,4 +21,13 @@ model users{
 
   createdAt DateTime  @db.Timestamp(3) @default(now())
   updatedAt DateTime? @db.Timestamp(3) @updatedAt()
+
+  refreshToken RefreshToken[]
+}
+
+model RefreshToken {
+  idx          Int       @id @default(autoincrement())
+  user         User      @relation(fields: [userIdx], references: [idx])
+  userIdx      Int
+  refreshToken String
 }
