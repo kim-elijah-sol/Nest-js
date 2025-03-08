@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { SHA256 } from 'crypto-js';
 import { AccessTokenPayload } from 'src/auth/types/AccessTokenPayload';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { LoginRequestDTO } from '../auth/dtos/LoginRequestDTO';
 import { JoinRequestDTO } from './dtos/JoinRequestDTO';
+import { LoginRequestDTO } from './dtos/LoginRequestDTO';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(private readonly prismaClient: PrismaService) {}
 
   async join(joinRequestDTO: JoinRequestDTO) {

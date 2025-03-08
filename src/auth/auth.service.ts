@@ -3,41 +3,29 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
-import { LoginRequestDTO } from './dtos/LoginRequestDTO';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UserService } from 'src/user/user.service';
 import { AccessTokenPayload } from './types/AccessTokenPayload';
 import { RefreshTokenPayload } from './types/RefreshTokenPayload';
-import { TokenData } from './types/TokenData';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UsersService,
+    private readonly userService: UserService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly prismaClient: PrismaService,
   ) {}
 
-  async login(loginDto: LoginRequestDTO): Promise<TokenData> {
-    const user = await this.validateUser(loginDto);
+  async logout(userIdx: number, refreshToken: string): Promise<void> {
+    const refreshTokenInDB = await this.findRefreshToken(userIdx, refreshToken);
 
-    if (!user) throw new UnauthorizedException('Can not find matching account');
+    if (!refreshTokenInDB) throw new InternalServerErrorException();
 
-    const accessToken = await this.createAccessToken(user);
-    const refreshToken = await this.createRefreshToken(user);
-
-    await this.saveRefreshToken(user.idx, refreshToken);
-
-    return {
-      accessToken,
-      refreshToken,
-    };
+    await this.remeveRefreshToken(refreshTokenInDB.idx);
   }
 
-  async logout(userIdx: number): Promise<void> {}
-
-  async refresh(userIdx: number, refreshToken: string): Promise<TokenData> {
+  async refresh(userIdx: number, refreshToken: string): Promise<string> {
     const result = this.findRefreshToken(userIdx, refreshToken);
 
     if (!result) {
@@ -50,26 +38,13 @@ export class AuthService {
 
     const accessToken = await this.createAccessToken(user);
 
-    return {
-      accessToken,
-      refreshToken,
-    };
+    return accessToken;
   }
 
-  // 유저 id, password 확인
-  async validateUser(
-    loginDto: LoginRequestDTO,
-  ): Promise<AccessTokenPayload | null> {
-    const user = await this.userService.login(loginDto);
-
-    return user;
-  }
-
-  // access_token 발급
   async createAccessToken(user: AccessTokenPayload): Promise<string> {
     const accessToken = await this.jwtService.signAsync(user, {
       secret: process.env.JWT_ACCESS_TOKEN_SECRET!,
-      expiresIn: '1m',
+      expiresIn: '1h',
     });
 
     return accessToken;
@@ -84,17 +59,31 @@ export class AuthService {
     return refreshToken;
   }
 
-  // DB의 refresh_token과 현재 refresh_token 비교
-  async findRefreshToken(
-    userIdx: number,
-    refreshToken: string,
-  ): Promise<boolean> {
-    return true;
+  async findRefreshToken(userIdx: number, refreshToken: string) {
+    const result = await this.prismaClient.refreshToken.findFirst({
+      where: {
+        userIdx,
+        refreshToken,
+      },
+    });
+
+    return result;
   }
 
-  // DB user 데이터에 refresh_token 저장
-  async saveRefreshToken(
-    userIdx: number,
-    refreshToken: string,
-  ): Promise<void> {}
+  async saveRefreshToken(userIdx: number, refreshToken: string): Promise<void> {
+    await this.prismaClient.refreshToken.create({
+      data: {
+        userIdx,
+        refreshToken,
+      },
+    });
+  }
+
+  async remeveRefreshToken(idx: number) {
+    await this.prismaClient.refreshToken.delete({
+      where: {
+        idx,
+      },
+    });
+  }
 }

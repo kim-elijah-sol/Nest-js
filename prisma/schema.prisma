@@ -29,5 +29,5 @@ model RefreshToken {
   idx          Int       @id @default(autoincrement())
   user         User      @relation(fields: [userIdx], references: [idx])
   userIdx      Int
-  refreshToken String
+  refreshToken String    @db.VarChar(250)
 }
