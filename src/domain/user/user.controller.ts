@@ -1,21 +1,44 @@
 import {
   Body,
+  ConflictException,
   Controller,
   HttpCode,
   InternalServerErrorException,
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginRequestDTO } from 'src/user/dtos/LoginRequestDTO';
-import { UserService } from 'src/user/user.service';
-import { AuthService } from './auth.service';
+import { AuthService } from 'src/auth/auth.service';
+import { JoinRequestDTO } from './dtos/JoinRequestDTO';
+import { LoginRequestDTO } from './dtos/LoginRequestDTO';
+import { UserService } from './user.service';
 
-@Controller('/auth')
-export class AuthController {
+@Controller('/user')
+export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
   ) {}
+
+  @Post('/join')
+  @HttpCode(200)
+  async join(@Body() joinRequestDTO: JoinRequestDTO) {
+    try {
+      await this.userService.join(joinRequestDTO);
+
+      return {
+        statusCode: 200,
+        success: true,
+      };
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new ConflictException(
+          `${joinRequestDTO.id} is already registered`,
+        );
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+  }
 
   @Post('login')
   @HttpCode(200)

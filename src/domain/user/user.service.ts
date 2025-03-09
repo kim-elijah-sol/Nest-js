@@ -35,7 +35,7 @@ export class UserService {
     });
   }
 
-  async getUser(userIdx: number): Promise<AccessTokenPayload | null> {
+  async getUserByIdx(userIdx: number): Promise<AccessTokenPayload | null> {
     return await this.prismaClient.user.findUnique({
       select: {
         idx: true,

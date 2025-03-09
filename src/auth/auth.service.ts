@@ -4,8 +4,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/domain/user/user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserService } from 'src/user/user.service';
 import { AccessTokenPayload } from './types/AccessTokenPayload';
 import { RefreshTokenPayload } from './types/RefreshTokenPayload';
 
@@ -32,7 +32,7 @@ export class AuthService {
       throw new UnauthorizedException('You need to log in first');
     }
 
-    const user = await this.userService.getUser(userIdx);
+    const user = await this.userService.getUserByIdx(userIdx);
 
     if (!user) throw new InternalServerErrorException();
 
