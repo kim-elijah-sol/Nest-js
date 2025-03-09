@@ -1,5 +1,3 @@
-export type AccessTokenPayload = {
-  idx: number;
-  id: string;
-  name: string;
-};
+import { UserDTO } from 'src/domain/user/dtos/UserDTO';
+
+export type AccessTokenPayload = UserDTO;
