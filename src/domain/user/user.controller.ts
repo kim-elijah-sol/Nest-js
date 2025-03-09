@@ -2,12 +2,16 @@ import {
   Body,
   ConflictException,
   Controller,
+  Delete,
   HttpCode,
   InternalServerErrorException,
   Post,
+  Request,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
+import { JwtRefreshTokenGuard } from 'src/auth/guard/refreshToken.guard';
 import { JoinRequestDTO } from './dtos/JoinRequestDTO';
 import { LoginRequestDTO } from './dtos/LoginRequestDTO';
 import { UserService } from './user.service';
@@ -69,6 +73,27 @@ export class UserController {
         throw error;
       }
 
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @UseGuards(JwtRefreshTokenGuard)
+  @Delete('logout')
+  @HttpCode(200)
+  async logout(@Request() request) {
+    try {
+      const refreshToken = await this.authService.findRefreshToken(
+        request.user.idx,
+        request.headers.refresh_token,
+      );
+
+      await this.authService.remeveRefreshToken(refreshToken!.idx);
+
+      return {
+        statusCode: 200,
+        success: true,
+      };
+    } catch {
       throw new InternalServerErrorException();
     }
   }

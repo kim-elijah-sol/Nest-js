@@ -1,7 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { AccessTokenPayload } from '../types/AccessTokenPayload';
+import { UserDTO } from 'src/domain/user/dtos/UserDTO';
 
 export class JwtAccessTokenStrategy extends PassportStrategy(
   Strategy,
@@ -20,7 +20,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(
     });
   }
 
-  async validate(req: Request, payload: AccessTokenPayload) {
+  async validate(req: Request, payload: UserDTO) {
     req.user = payload;
     return payload;
   }

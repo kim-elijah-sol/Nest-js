@@ -4,10 +4,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserDTO } from 'src/domain/user/dtos/UserDTO';
 import { UserRepository } from 'src/domain/user/user.repository';
 import { AuthRepository } from './auth.repository';
-import { AccessTokenPayload } from './types/AccessTokenPayload';
-import { RefreshTokenPayload } from './types/RefreshTokenPayload';
 
 @Injectable()
 export class AuthService {
@@ -17,14 +16,14 @@ export class AuthService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async createAccessToken(user: AccessTokenPayload): Promise<string> {
+  async createAccessToken(user: UserDTO): Promise<string> {
     return await this.jwtService.signAsync(user, {
       secret: process.env.JWT_ACCESS_TOKEN_SECRET!,
       expiresIn: '1h',
     });
   }
 
-  async createRefreshToken(user: RefreshTokenPayload): Promise<string> {
+  async createRefreshToken(user: UserDTO): Promise<string> {
     return await this.jwtService.signAsync(user, {
       secret: process.env.JWT_REFRESH_TOKEN_SECRET!,
       expiresIn: '2m',

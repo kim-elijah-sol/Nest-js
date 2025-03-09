@@ -4,6 +4,10 @@ import { UserService } from 'src/domain/user/user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthRepository } from './auth.repository';
 import { AuthService } from './auth.service';
+import { JwtAccessTokenGuard } from './guard/accessToken.guard';
+import { JwtRefreshTokenGuard } from './guard/refreshToken.guard';
+import { JwtAccessTokenStrategy } from './strategy/accessToken.strategy';
+import { JwtRefreshTokenStrategy } from './strategy/refreshToken.strategy';
 
 @Module({
   providers: [
@@ -14,6 +18,11 @@ import { AuthService } from './auth.service';
     UserRepository,
 
     PrismaService,
+
+    JwtAccessTokenStrategy,
+    JwtRefreshTokenStrategy,
+    JwtAccessTokenGuard,
+    JwtRefreshTokenGuard,
   ],
   exports: [AuthService],
 })
