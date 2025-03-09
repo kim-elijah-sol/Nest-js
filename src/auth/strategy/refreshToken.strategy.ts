@@ -14,7 +14,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request) => {
-          return request?.headers?.refreshToken;
+          return request?.headers?.refresh_token;
         },
       ]),
       secretOrKey: process.env.JWT_REFRESH_TOKEN_SECRET!,
@@ -24,7 +24,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: RefreshTokenPayload) {
-    const refreshToken = req?.headers?.refreshToken;
+    const refreshToken = req?.headers?.refresh_token;
 
     if (!refreshToken) {
       throw new UnauthorizedException('refresh token is undefined');

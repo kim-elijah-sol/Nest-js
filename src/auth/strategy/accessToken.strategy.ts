@@ -11,7 +11,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request) => {
-          return request?.headers?.accessToken;
+          return request?.headers?.access_token;
         },
       ]),
       secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET!,
@@ -20,7 +20,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(
     });
   }
 
-  validate(req: Request, payload: AccessTokenPayload) {
+  async validate(req: Request, payload: AccessTokenPayload) {
     req.user = payload;
     return payload;
   }

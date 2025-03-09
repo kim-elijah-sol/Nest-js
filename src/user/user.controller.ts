@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAccessTokenGuard } from 'src/auth/guard/accessToken.guard';
+import { JwtRefreshTokenGuard } from 'src/auth/guard/refreshToken.guard';
 import { JoinRequestDTO } from './dtos/JoinRequestDTO';
 import { UserService } from './user.service';
 
@@ -38,6 +39,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAccessTokenGuard)
+  @UseGuards(JwtRefreshTokenGuard)
   @Delete('/test')
   async test() {
     return 'hi';
