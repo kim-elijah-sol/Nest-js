@@ -26,8 +26,7 @@ model User {
 }
 
 model RefreshToken {
-  idx          Int       @id @default(autoincrement())
+  refreshToken String    @db.VarChar(250) @unique
   user         User      @relation(fields: [userIdx], references: [idx])
   userIdx      Int
-  refreshToken String    @db.VarChar(250)
 }

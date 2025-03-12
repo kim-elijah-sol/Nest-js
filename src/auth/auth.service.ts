@@ -57,7 +57,7 @@ export class AuthService {
     await this.authRepository.createRefreshToken(userIdx, refreshToken);
   }
 
-  async remeveRefreshToken(idx: number) {
-    await this.authRepository.deleteRefreshTokenByIdx(idx);
+  async remeveRefreshToken(refreshToken: string) {
+    await this.authRepository.deleteRefreshToken(refreshToken);
   }
 }

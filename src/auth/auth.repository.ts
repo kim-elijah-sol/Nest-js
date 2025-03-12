@@ -28,10 +28,10 @@ export class AuthRepository {
     });
   }
 
-  async deleteRefreshTokenByIdx(idx: number) {
+  async deleteRefreshToken(refreshToken: string) {
     await this.prismaClient.refreshToken.delete({
       where: {
-        idx,
+        refreshToken,
       },
     });
   }

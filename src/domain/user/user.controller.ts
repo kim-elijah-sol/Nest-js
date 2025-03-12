@@ -11,10 +11,8 @@ import {
 import { AuthService } from 'src/auth/auth.service';
 import { TokenDTO } from 'src/auth/dtos/Token.dto';
 import { Token } from 'src/decorator';
-import { User } from 'src/decorator/User.decorator';
 import { JoinRequestDTO } from './dtos/JoinRequest.dto';
 import { LoginRequestDTO } from './dtos/LoginRequest.dto';
-import { UserDTO } from './dtos/User.dto';
 import { UserService } from './user.service';
 
 @Controller('/user')
@@ -80,20 +78,17 @@ export class UserController {
 
   @Delete('logout')
   @HttpCode(200)
-  async logout(@Token() token: TokenDTO, @User() user: UserDTO) {
+  async logout(@Token() token: TokenDTO) {
     try {
-      const refreshToken = await this.authService.findRefreshToken(
-        user.idx,
-        token.refreshToken,
-      );
-
-      await this.authService.remeveRefreshToken(refreshToken!.idx);
+      await this.authService.remeveRefreshToken(token.refreshToken);
 
       return {
         statusCode: 200,
         success: true,
       };
-    } catch {
+    } catch (e) {
+      console.log(e);
+
       throw new InternalServerErrorException();
     }
   }
