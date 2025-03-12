@@ -1,2 +1,2 @@
 export * from './Token.decorator'
-export * from './User.decorator'
+export * from './TokenInfo.decorator'

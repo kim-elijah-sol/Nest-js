@@ -3,14 +3,18 @@ import {
   ConflictException,
   Controller,
   Delete,
+  Get,
   HttpCode,
   InternalServerErrorException,
   Post,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { TokenDTO } from 'src/auth/dtos/Token.dto';
-import { Token } from 'src/decorator';
+import { TokenInfoDTO } from 'src/auth/dtos/TokenInfo.dto';
+import { JwtAccessTokenGuard } from 'src/auth/guard/accessToken.guard';
+import { Token, TokenInfo } from 'src/decorator';
 import { JoinRequestDTO } from './dtos/JoinRequest.dto';
 import { LoginRequestDTO } from './dtos/LoginRequest.dto';
 import { UserService } from './user.service';
@@ -52,8 +56,12 @@ export class UserController {
       if (!user)
         throw new UnauthorizedException('Can not find matching account');
 
-      const accessToken = await this.authService.createAccessToken(user);
-      const refreshToken = await this.authService.createRefreshToken(user);
+      const tokenPayload = this.authService.userToTokenPayload(user);
+
+      const accessToken =
+        await this.authService.createAccessToken(tokenPayload);
+      const refreshToken =
+        await this.authService.createRefreshToken(tokenPayload);
 
       const tokens = {
         accessToken,
@@ -87,9 +95,20 @@ export class UserController {
         success: true,
       };
     } catch (e) {
-      console.log(e);
-
       throw new InternalServerErrorException();
     }
+  }
+
+  @UseGuards(JwtAccessTokenGuard)
+  @Get('me')
+  @HttpCode(200)
+  async me(@TokenInfo() tokenInfo: TokenInfoDTO) {
+    const data = await this.userService.getUserByIdx(tokenInfo.idx);
+
+    return {
+      statusCode: 200,
+      success: true,
+      data,
+    };
   }
 }

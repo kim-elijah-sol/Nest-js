@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserDTO } from 'src/domain/user/dtos/User.dto';
 import { UserRepository } from 'src/domain/user/user.repository';
 import { AuthRepository } from './auth.repository';
+import { TokenPayloadDTO } from './dtos/TokenPayload.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,17 +17,17 @@ export class AuthService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async createAccessToken(user: UserDTO): Promise<string> {
-    return await this.jwtService.signAsync(user, {
+  async createAccessToken(payload: TokenPayloadDTO): Promise<string> {
+    return await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_ACCESS_TOKEN_SECRET!,
-      expiresIn: '1h',
+      expiresIn: '10s',
     });
   }
 
-  async createRefreshToken(user: UserDTO): Promise<string> {
-    return await this.jwtService.signAsync(user, {
+  async createRefreshToken(payload: TokenPayloadDTO): Promise<string> {
+    return await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_REFRESH_TOKEN_SECRET!,
-      expiresIn: '2m',
+      expiresIn: '1h',
     });
   }
 
@@ -59,5 +60,12 @@ export class AuthService {
 
   async remeveRefreshToken(refreshToken: string) {
     await this.authRepository.deleteRefreshToken(refreshToken);
+  }
+
+  userToTokenPayload(user: UserDTO): TokenPayloadDTO {
+    return {
+      idx: user.idx,
+      id: user.id,
+    };
   }
 }

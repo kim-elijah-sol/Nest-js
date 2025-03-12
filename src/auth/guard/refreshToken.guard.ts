@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import { UserDTO } from 'src/domain/user/dtos/User.dto';
 import { AuthService } from '../auth.service';
+import { TokenPayloadDTO } from '../dtos/TokenPayload.dto';
 
 @Injectable()
 export class JwtRefreshTokenGuard extends AuthGuard('refreshToken') {
@@ -39,7 +39,7 @@ export class JwtRefreshTokenGuard extends AuthGuard('refreshToken') {
         throw new UnauthorizedException('refresh token is wrong');
       }
 
-      request.user = payload;
+      request.tokenInfo = payload;
 
       return true;
     } catch (error) {
@@ -49,11 +49,11 @@ export class JwtRefreshTokenGuard extends AuthGuard('refreshToken') {
     }
   }
 
-  validate(token: string): UserDTO {
+  validate(token: string): TokenPayloadDTO {
     const secret = process.env.JWT_REFRESH_TOKEN_SECRET!;
 
     try {
-      const verify: UserDTO = this.jwtService.verify(token, {
+      const verify: TokenPayloadDTO = this.jwtService.verify(token, {
         secret,
       });
 
