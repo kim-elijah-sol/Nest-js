@@ -1,7 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserDTO } from 'src/domain/user/dtos/UserDTO';
+import { UserDTO } from 'src/domain/user/dtos/User.dto';
 
 export class JwtAccessTokenStrategy extends PassportStrategy(
   Strategy,

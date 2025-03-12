@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { JoinRequestDTO } from './dtos/JoinRequestDTO';
-import { LoginRequestDTO } from './dtos/LoginRequestDTO';
+import { JoinRequestDTO } from './dtos/JoinRequest.dto';
+import { LoginRequestDTO } from './dtos/LoginRequest.dto';
 import { UserRepository } from './user.repository';
 
 @Injectable()

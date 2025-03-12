@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { SHA256 } from 'crypto-js';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { JoinRequestDTO } from './dtos/JoinRequestDTO';
-import { LoginRequestDTO } from './dtos/LoginRequestDTO';
-import { UserDTO } from './dtos/UserDTO';
+import { JoinRequestDTO } from './dtos/JoinRequest.dto';
+import { LoginRequestDTO } from './dtos/LoginRequest.dto';
+import { UserDTO } from './dtos/User.dto';
 
 @Injectable()
 export class UserRepository {
@@ -19,7 +19,10 @@ export class UserRepository {
     });
   }
 
-  async findUserByIdAndPassword({ id, password }: LoginRequestDTO): Promise<UserDTO | null> {
+  async findUserByIdAndPassword({
+    id,
+    password,
+  }: LoginRequestDTO): Promise<UserDTO | null> {
     return await this.prismaClient.user.findUnique({
       select: {
         idx: true,

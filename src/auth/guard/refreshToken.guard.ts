@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import { UserDTO } from 'src/domain/user/dtos/UserDTO';
+import { UserDTO } from 'src/domain/user/dtos/User.dto';
 import { AuthService } from '../auth.service';
 
 @Injectable()

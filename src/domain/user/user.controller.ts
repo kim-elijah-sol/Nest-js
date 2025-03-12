@@ -3,19 +3,18 @@ import {
   ConflictException,
   Controller,
   Delete,
-  Headers,
   HttpCode,
   InternalServerErrorException,
   Post,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
-import { Token } from 'src/auth/decorator/Token.decorator';
-import { JwtRefreshTokenGuard } from 'src/auth/guard/refreshToken.guard';
-import { JoinRequestDTO } from './dtos/JoinRequestDTO';
-import { LoginRequestDTO } from './dtos/LoginRequestDTO';
-import { UserDTO } from './dtos/UserDTO';
+import { TokenDTO } from 'src/auth/dtos/Token.dto';
+import { Token } from 'src/decorator';
+import { User } from 'src/decorator/User.decorator';
+import { JoinRequestDTO } from './dtos/JoinRequest.dto';
+import { LoginRequestDTO } from './dtos/LoginRequest.dto';
+import { UserDTO } from './dtos/User.dto';
 import { UserService } from './user.service';
 
 @Controller('/user')
@@ -79,14 +78,13 @@ export class UserController {
     }
   }
 
-  @UseGuards(JwtRefreshTokenGuard)
   @Delete('logout')
   @HttpCode(200)
-  async logout(@Headers() headers, @Token() token: UserDTO) {
+  async logout(@Token() token: TokenDTO, @User() user: UserDTO) {
     try {
       const refreshToken = await this.authService.findRefreshToken(
-        token.idx,
-        headers.refresh_token,
+        user.idx,
+        token.refreshToken,
       );
 
       await this.authService.remeveRefreshToken(refreshToken!.idx);

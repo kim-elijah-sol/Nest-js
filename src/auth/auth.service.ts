@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserDTO } from 'src/domain/user/dtos/UserDTO';
+import { UserDTO } from 'src/domain/user/dtos/User.dto';
 import { UserRepository } from 'src/domain/user/user.repository';
 import { AuthRepository } from './auth.repository';
 
