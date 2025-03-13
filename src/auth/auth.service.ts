@@ -45,7 +45,9 @@ export class AuthService {
 
     if (!user) throw new InternalServerErrorException();
 
-    const accessToken = await this.createAccessToken(user);
+    const tokenPayload = this.userToTokenPayload(user);
+
+    const accessToken = await this.createAccessToken(tokenPayload);
 
     return accessToken;
   }
@@ -58,7 +60,7 @@ export class AuthService {
     await this.authRepository.createRefreshToken(userIdx, refreshToken);
   }
 
-  async remeveRefreshToken(refreshToken: string) {
+  async removeRefreshToken(refreshToken: string) {
     await this.authRepository.deleteRefreshToken(refreshToken);
   }
 

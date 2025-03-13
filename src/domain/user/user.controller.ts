@@ -14,6 +14,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { TokenDTO } from 'src/auth/dtos/Token.dto';
 import { TokenInfoDTO } from 'src/auth/dtos/TokenInfo.dto';
 import { JwtAccessTokenGuard } from 'src/auth/guard/accessToken.guard';
+import { JwtRefreshTokenGuard } from 'src/auth/guard/refreshToken.guard';
 import { Token, TokenInfo } from 'src/decorator';
 import { JoinRequestDTO } from './dtos/JoinRequest.dto';
 import { LoginRequestDTO } from './dtos/LoginRequest.dto';
@@ -88,7 +89,7 @@ export class UserController {
   @HttpCode(200)
   async logout(@Token() token: TokenDTO) {
     try {
-      await this.authService.remeveRefreshToken(token.refreshToken);
+      await this.authService.removeRefreshToken(token.refreshToken);
 
       return {
         statusCode: 200,
@@ -109,6 +110,27 @@ export class UserController {
       statusCode: 200,
       success: true,
       data,
+    };
+  }
+
+  @UseGuards(JwtRefreshTokenGuard)
+  @Get('refresh')
+  @HttpCode(200)
+  async refresh(
+    @Token() token: TokenDTO,
+    @TokenInfo() tokenInfo: TokenInfoDTO,
+  ) {
+    const newAccessToken = await this.authService.refresh(
+      tokenInfo.idx,
+      token.refreshToken,
+    );
+
+    return {
+      statusCode: 200,
+      success: true,
+      data: {
+        accessToken: newAccessToken,
+      },
     };
   }
 }
