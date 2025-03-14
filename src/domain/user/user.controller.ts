@@ -10,6 +10,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { ApiCreatedResponse } from '@nestjs/swagger';
 import { AuthService } from 'src/auth/auth.service';
 import { TokenDTO } from 'src/auth/dtos/Token.dto';
 import { TokenInfoDTO } from 'src/auth/dtos/TokenInfo.dto';
@@ -18,6 +19,9 @@ import { JwtRefreshTokenGuard } from 'src/auth/guard/refreshToken.guard';
 import { Token, TokenInfo } from 'src/decorator';
 import { JoinRequestDTO } from './dtos/JoinRequest.dto';
 import { LoginRequestDTO } from './dtos/LoginRequest.dto';
+import { LoginResponseDTO } from './dtos/LoginResponse.dto';
+import { MeResponseDTO } from './dtos/MeResponse.dto';
+import { UserDTO } from './dtos/User.dto';
 import { UserService } from './user.service';
 
 @Controller('/user')
@@ -50,6 +54,10 @@ export class UserController {
 
   @Post('login')
   @HttpCode(200)
+  @ApiCreatedResponse({
+    description: '로그인 성공 시 토큰을 발행합니다.',
+    type: LoginResponseDTO,
+  })
   async login(@Body() loginRequestDTO: LoginRequestDTO) {
     try {
       const user = await this.userService.login(loginRequestDTO);
@@ -64,7 +72,7 @@ export class UserController {
       const refreshToken =
         await this.authService.createRefreshToken(tokenPayload);
 
-      const tokens = {
+      const tokens: LoginResponseDTO = {
         accessToken,
         refreshToken,
       };
@@ -95,7 +103,7 @@ export class UserController {
         statusCode: 200,
         success: true,
       };
-    } catch (e) {
+    } catch {
       throw new InternalServerErrorException();
     }
   }
@@ -103,8 +111,18 @@ export class UserController {
   @UseGuards(JwtAccessTokenGuard)
   @Get('me')
   @HttpCode(200)
+  @ApiCreatedResponse({
+    description: '회원 정보를 반환합니다.',
+    type: MeResponseDTO,
+  })
   async me(@TokenInfo() tokenInfo: TokenInfoDTO) {
-    const data = await this.userService.getUserByIdx(tokenInfo.idx);
+    const user: UserDTO | null = await this.userService.getUserByIdx(
+      tokenInfo.idx,
+    );
+
+    if (!user) throw new InternalServerErrorException();
+
+    const data = this.userService.userToMe(user);
 
     return {
       statusCode: 200,
