@@ -157,7 +157,7 @@ export class UserController {
   }
 
   @CacheKey('cache-test')
-  @CacheTTL(5000)
+  @CacheTTL(10000)
   @Get('cache-test')
   @HttpCode(200)
   async cacheTest() {
@@ -169,6 +169,16 @@ export class UserController {
       data: {
         random,
       },
+    };
+  }
+
+  @Get('remove-cache')
+  async removeCache() {
+    await this.cacheManager.del('cache-test');
+
+    return {
+      statusCode: 200,
+      success: true,
     };
   }
 }
