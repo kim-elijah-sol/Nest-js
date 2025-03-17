@@ -1,3 +1,4 @@
+import { CacheKey, CacheTTL, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   Body,
   ConflictException,
@@ -5,12 +6,14 @@ import {
   Delete,
   Get,
   HttpCode,
+  Inject,
   InternalServerErrorException,
   Post,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ApiCreatedResponse } from '@nestjs/swagger';
+import { Cache } from 'cache-manager';
 import { AuthService } from 'src/auth/auth.service';
 import { TokenDTO } from 'src/auth/dtos/Token.dto';
 import { TokenInfoDTO } from 'src/auth/dtos/TokenInfo.dto';
@@ -29,6 +32,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   @Post('/join')
@@ -148,6 +152,22 @@ export class UserController {
       success: true,
       data: {
         accessToken: newAccessToken,
+      },
+    };
+  }
+
+  @CacheKey('cache-test')
+  @CacheTTL(5000)
+  @Get('cache-test')
+  @HttpCode(200)
+  async cacheTest() {
+    const random = Math.random();
+
+    return {
+      statusCode: 200,
+      success: true,
+      data: {
+        random,
       },
     };
   }
