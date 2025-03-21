@@ -9,4 +9,8 @@ export class PostService {
   async createPost(request: CreatePostRequestDTO, userIdx: number) {
     return await this.postRepository.createPost(request, userIdx);
   }
+
+  async getMyPosts(userIdx: number) {
+    return await this.postRepository.getMyPosts(userIdx);
+  }
 }

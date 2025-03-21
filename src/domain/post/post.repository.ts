@@ -18,4 +18,23 @@ export class PostRepository {
       },
     });
   }
+
+  async getMyPosts(userIdx: number) {
+    return await this.prismaClient.user.findFirst({
+      select: {
+        name: true,
+        posts: {
+          select: {
+            idx: true,
+            title: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+      where: {
+        idx: userIdx,
+      },
+    });
+  }
 }

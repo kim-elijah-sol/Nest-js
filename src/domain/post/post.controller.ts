@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   InternalServerErrorException,
   Post,
@@ -38,6 +39,19 @@ export class PostController {
       data: {
         postIdx: result.idx,
       },
+    };
+  }
+
+  @UseGuards(JwtAccessTokenGuard)
+  @Get('/me')
+  @HttpCode(200)
+  async getMyPosts(@TokenInfo() tokenInfo: TokenInfoDTO) {
+    const data = await this.postService.getMyPosts(tokenInfo.idx);
+
+    return {
+      statusCode: 200,
+      success: true,
+      data,
     };
   }
 }
