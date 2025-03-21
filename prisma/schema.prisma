@@ -23,10 +23,23 @@ model User {
   updatedAt DateTime? @db.Timestamp(3) @updatedAt()
 
   refreshToken RefreshToken[]
+  posts        Post[]
 }
 
 model RefreshToken {
   refreshToken String    @db.VarChar(250) @unique
   user         User      @relation(fields: [userIdx], references: [idx])
   userIdx      Int
+}
+
+model Post {
+  idx       Int       @id @default(autoincrement())
+
+  title     String    @db.VarChar(200)
+  content   String    @db.Text
+  createdAt DateTime  @db.Timestamp(3) @default(now())
+  updatedAt DateTime? @db.Timestamp(3) @updatedAt()
+
+  author     User     @relation(fields: [authorId], references: [idx])
+  authorId   Int
 }
