@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
+import { PostModule } from './domain/post/post.module';
 import { UsersModule } from './domain/user/user.module';
 
 @Module({
@@ -11,6 +12,7 @@ import { UsersModule } from './domain/user/user.module';
     JwtModule.register({ global: true }),
     UsersModule,
     AuthModule,
+    PostModule,
   ],
   providers: [
     {
